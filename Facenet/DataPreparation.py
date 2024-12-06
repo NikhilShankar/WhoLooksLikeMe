@@ -5,11 +5,13 @@ import tensorflow as tf
 import tensorflow_hub as hub
 from tensorflow.keras.preprocessing.image import img_to_array, load_img
 from PIL import Image
+from datetime import datetime
 
 class DataPreparation:
     def __init__(self, original_data_dir, output_dir, sample_class_number):
+        parent_data_output_folder = "train-main/"
         self.original_data_dir = original_data_dir  # Path to the directory with 1000 personalities
-        self.output_dir = output_dir  # Path to store the new dataset
+        self.output_dir = parent_data_output_folder + output_dir  # Path to store the new dataset
         self.sample_class_number = sample_class_number  # Number of folders to randomly select
         self.selected_classes = []
 
@@ -30,8 +32,12 @@ class DataPreparation:
         Selects `sample_class_number` random folders from the original data
         and creates a new folder with preprocessed images for training.
         """
+        timestamp = datetime.now().strftime('%d-%m-%y-%H-%M')
         # Create output directory if not exists
         if not os.path.exists(self.output_dir):
+            os.makedirs(self.output_dir)
+        else:
+            self.output_dir = f'{self.output_dir}-{timestamp}'
             os.makedirs(self.output_dir)
 
         all_folders = os.listdir(self.original_data_dir)

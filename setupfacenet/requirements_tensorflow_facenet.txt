@@ -5,3 +5,4 @@ numpy==1.23.5
 opencv-python==4.7.0.72
 tensorflow-hub==0.12.0
 pillow==8.4.0
+pandas==2.2.3

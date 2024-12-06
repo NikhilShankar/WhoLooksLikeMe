@@ -2,7 +2,7 @@ import numpy as np
 import tensorflow as tf
 import os
 from tensorflow.keras.preprocessing.image import img_to_array, load_img
-
+from datetime import datetime
 
 class FaceNetModel:
     def __init__(self, model_path="../inception-v3"):
@@ -14,8 +14,6 @@ class FaceNetModel:
         if len(image.shape) == 3:
             image = np.expand_dims(image, axis=0)  # Add batch dimension if missing
         
-        # Check the shape of the image
-        print("Image shape after preprocessing:", image.shape)
         """
         Accepts a preprocessed image and returns the embedding.
         """
@@ -45,6 +43,7 @@ class FaceNetModel:
                 embeddings[folder_name] = avg_embedding
 
                 # Save the embeddings to a file
+                timestamp = datetime.now().strftime('%d-%m-%y-%H-%M')
                 embedding_file = os.path.join(output_dir, f"{folder_name}_embedding.npy")
                 np.save(embedding_file, avg_embedding)
         

@@ -53,5 +53,5 @@ build/
 inception-v3/
 VGGFace/
 dataset_images/
-Facenet/embeddings
 Facenet/train50
+Facenet/train-main
