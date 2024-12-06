@@ -9,9 +9,8 @@ from datetime import datetime
 
 class DataPreparation:
     def __init__(self, original_data_dir, output_dir, sample_class_number):
-        parent_data_output_folder = "train-main/"
         self.original_data_dir = original_data_dir  # Path to the directory with 1000 personalities
-        self.output_dir = parent_data_output_folder + output_dir  # Path to store the new dataset
+        self.output_dir = output_dir  # Path to store the new dataset
         self.sample_class_number = sample_class_number  # Number of folders to randomly select
         self.selected_classes = []
 
@@ -24,7 +23,6 @@ class DataPreparation:
         img = img_to_array(img)
         img = np.expand_dims(img, axis=0)
         img = img / 255.0  # Normalize the image
-        print(img.shape)
         return img
 
     def prepare_data(self):
@@ -32,12 +30,8 @@ class DataPreparation:
         Selects `sample_class_number` random folders from the original data
         and creates a new folder with preprocessed images for training.
         """
-        timestamp = datetime.now().strftime('%d-%m-%y-%H-%M')
         # Create output directory if not exists
         if not os.path.exists(self.output_dir):
-            os.makedirs(self.output_dir)
-        else:
-            self.output_dir = f'{self.output_dir}-{timestamp}'
             os.makedirs(self.output_dir)
 
         all_folders = os.listdir(self.original_data_dir)

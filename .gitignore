@@ -56,3 +56,5 @@ dataset_images/
 Facenet/train50
 Facenet/train-main
 DataCleaners/train-00000-of-00001.parquet
+datasets/
+
