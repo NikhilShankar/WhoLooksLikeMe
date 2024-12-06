@@ -1,0 +1,7 @@
+tensorflow==2.12.0
+scipy==1.10.1
+matplotlib==3.7.1
+numpy==1.23.5
+opencv-python==4.7.0.72
+tensorflow-hub==0.12.0
+pillow==8.4.0

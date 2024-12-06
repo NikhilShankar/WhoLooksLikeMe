@@ -1,0 +1,57 @@
+# Python bytecode files
+*.pyc
+*.pyo
+__pycache__/
+*.pyd
+
+# Virtual environment directories (add more if you use different virtual environment names)
+venv/
+env/
+ENV/
+venv.bak/
+env.bak/
+
+# IDE and editor settings (common ones, feel free to customize based on your IDE)
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Python package distribution
+*.egg
+*.egg-info/
+dist/
+build/
+*.whl
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Log files
+*.log
+
+# Coverage reports (if you use pytest, coverage tools)
+.coverage
+*.coverage
+.coverage.*
+
+# Configuration files
+*.ini
+*.json
+*.yml
+*.yaml
+*.toml
+
+
+
+
+#for facenet 
+inception-v3/
+VGGFace/
+dataset_images/
+Facenet/embeddings
+Facenet/train50
