@@ -54,6 +54,8 @@ class FaceNetEvaluator:
                     # Check if the predicted class matches the actual class
                     if predicted_class == folder_name:
                         correct_predictions += 1
+                    else:
+                        print(f"Predicted: {predicted_class} Actual: {folder_name}")
                     total_images += 1
 
         # Calculate accuracy

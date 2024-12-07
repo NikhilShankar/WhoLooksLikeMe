@@ -2,14 +2,25 @@ import os
 import numpy as np
 import tensorflow as tf
 from tensorflow.keras.preprocessing.image import load_img, img_to_array
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
-class FaceNetModel2:
+
+class FaceNetModelAugMax:
     def __init__(self, model_dir="../inception-v3"):
         """
         Load the InceptionResNetV1 model saved in TensorFlow's SavedModel format.
         """
         self.model = tf.saved_model.load(model_dir)
-        self.model.summary()
+        # Define the ImageDataGenerator for augmentations
+        self.datagen = ImageDataGenerator(
+            rotation_range=30,          # Random rotation between -30 and 30 degrees
+            width_shift_range=0.2,      # Horizontal shift
+            height_shift_range=0.2,     # Vertical shift
+            shear_range=0.2,            # Shear transformation
+            zoom_range=0.2,             # Random zoom
+            horizontal_flip=True,       # Flip images randomly horizontally
+            fill_mode='nearest'         # How to fill missing pixels after transformations
+        )
         print("InceptionResNetV1 model loaded successfully!")
 
     def get_embeddings(self, image):
@@ -41,13 +52,22 @@ class FaceNetModel2:
                     img = load_img(image_path, target_size=(299, 299))  # InceptionV3 input size
                     img = img_to_array(img)  # Convert image to array
                     img = img / 255.0  # Normalize image to [0, 1]
-                    
-                    # Get embedding for each image
-                    embedding = self.get_embeddings(img)
-                    folder_embeddings.append(embedding)
 
+                    # Apply augmentation
+                    augmented_images = self.datagen.flow(np.expand_dims(img, axis=0), batch_size=1)
+
+                    # Process each augmented image and get embeddings
+                    augmented_embeddings = []
+                    for _ in range(5):  # You can control the number of augmented images to generate
+                        augmented_img = next(augmented_images)[0]
+                        embedding = self.get_embeddings(augmented_img)
+                        augmented_embeddings.append(embedding)
+                    
+                    # Average embeddings for this person (you can also use other methods like max)
+                    avg_embedding = np.max(np.array(augmented_embeddings), axis=0)
+                    folder_embeddings.append(avg_embedding)
                 # Average embeddings for each person (you can also try other methods like max)
-                avg_embedding = np.mean(np.array(folder_embeddings), axis=0)
+                avg_embedding = np.max(np.array(folder_embeddings), axis=0)
                 embeddings[folder_name] = avg_embedding
 
                 # Save the embeddings to a file inside the embeddings folder
