@@ -58,5 +58,8 @@ Facenet/train-main
 DataCleaners/train-00000-of-00001.parquet
 datasets/
 
-# clien
+# client
 client/who-looks-like-me/node_modules
+
+# server
+server/.env
