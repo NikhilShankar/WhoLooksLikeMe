@@ -1,8 +1,11 @@
-tensorflow==2.12.0
-scipy==1.10.1
-matplotlib==3.7.1
-numpy==1.23.5
-opencv-python==4.7.0.72
-tensorflow-hub==0.12.0
-pillow==8.4.0
-pandas==2.2.3
+tensorflow==2.18.0
+tensorboard==2.18.0
+matplotlib==3.9.0
+numpy==2.1.0
+ipykernel==6.22.0  # needed to run jupyter notebooks
+nbconvert==7.4.0  # needed for converting ipynb to other formats such as python, html, and pdf
+tensorflow-datasets==4.9.2  # needed for loading the flowers dataset for image localization
+keras-cv==0.5.1  # needed for the IoU metric over bounding boxes
+ipywidgets==8.0.7  # needed to have IProgress, used by tensorflow-datasets and keras-cv (for the progress bar)
+scikit-learn==1.5.2  # needed for tSNE calculation
+opencv-python==4.8.0.74  # needed for plot_bounding_box_gallery of keras-cv (part of a KerasCV tutorial for object detection)

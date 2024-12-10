@@ -3,6 +3,10 @@ import numpy as np
 import tensorflow as tf
 from tensorflow.keras.preprocessing.image import load_img, img_to_array
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
+import time
+import datetime
+import pandas as pd
+
 
 #This model saves embeddings for all images and does a binary search to find similarities 
 #Other models rely on saving average embedding
@@ -12,7 +16,6 @@ class FaceNetModelAdvanced:
         Load the InceptionResNetV1 model saved in TensorFlow's SavedModel format.
         """
         self.model = tf.saved_model.load(model_dir)
-        self.model.summary()
         # Define the ImageDataGenerator for augmentations
         self.datagen = ImageDataGenerator(
             rotation_range=30,          # Random rotation between -30 and 30 degrees
@@ -40,6 +43,9 @@ class FaceNetModelAdvanced:
         For each folder (personality), create embeddings and save them to the embeddings folder.
         """
         print("Augmentation : {should_augment} with augmentated image count : {augmentation_count}")
+        
+        start_train_time = time.time()
+        self.dataset_dir = data_dir
         input_dir = f'{data_dir}/train'
         embeddings_dir = f'{data_dir}/embeddings'
         embeddings = {}
@@ -80,5 +86,17 @@ class FaceNetModelAdvanced:
                 # Save the embeddings to a file inside the embeddings folder
                 embedding_file = os.path.join(embeddings_dir, f"{folder_name}_embedding.npy")
                 np.save(embedding_file, np.array(folder_embeddings))
-
+        train_time = time.time() - start_train_time
+        metrics = {
+            "Train Time": train_time
+        }
+        model_name = os.path.basename(self.dataset_dir)
+        timestamp = datetime.now().strftime("%m-%d-%H-%M")
+        # Save results to CSV
+        df_results = pd.DataFrame([metrics])
+        output_dir = f'../savedmodels/{model_name}'
+        if not os.path.exists(output_dir):
+            os.makedirs(output_dir)
+        results_file = f'{output_dir}/training_dir_{timestamp}.csv'
+        df_results.to_csv(results_file, index=False)
         return embeddings

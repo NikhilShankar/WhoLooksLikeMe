@@ -58,3 +58,5 @@ Facenet/train-main
 DataCleaners/train-00000-of-00001.parquet
 datasets/
 
+#savedmodels folder is also heavy hence not committing it
+savedmodels

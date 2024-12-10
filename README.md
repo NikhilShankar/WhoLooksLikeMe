@@ -20,3 +20,13 @@
 - After creating the dataset_images open Training.ipynb file.
 - Make sure that label_names.csv and output_with_gender.csv file are present inside DataCleaners folder
 
+
+
+
+
+Reference
+
+https://gist.github.com/swghosh/f728fbba5a26af93a5f58a6db979e33e
+
+
+https://www.kaggle.com/datasets/hereisburak/pins-face-recognition

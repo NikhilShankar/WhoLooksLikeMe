@@ -50,9 +50,6 @@ class FaceNetAdvancedEvaluator:
             num_iterations += 1
             round_scores = []
             for person in remaining_persons:
-                print(f'Shape of all embeddings of the person {all_embeddings[person].shape}')
-                print(f'Shape of all embeddings of the person for each {all_embeddings[person][currentIter].shape}')
-                print(f'Shape of test embedding {test_embedding.shape}')
                 similarities = self.calculate_similarity(test_embedding, all_embeddings[person])
                 round_scores.append((person, max(similarities)))  # Choose the max similarity in this round
             currentIter+=1
