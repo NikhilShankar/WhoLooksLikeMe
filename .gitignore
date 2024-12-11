@@ -60,3 +60,5 @@ datasets/
 
 #savedmodels folder is also heavy hence not committing it
 savedmodels
+WhoLooksLikeMe-Model/dataset
+WhoLooksLikeMe-Model/TrainingDataImages/WLLM-Model-Nikhil-L2-12-10-01-24/train

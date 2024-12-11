@@ -65,22 +65,16 @@ class SimilarityCalculatorAdvancedCorrected2:
         cumulative_scores = {person: 0 for person in remaining_persons}
         frequency_scores = {person: 0 for person in remaining_persons}
 
-        #For small datasets we need to keep the while loop running for atleast 2 iterations and 10 wont be the correct number
-        result = min(int(len(remaining_persons) / 4), topN)
-        print(f'Binary Search till {result}')
         currentIter = 0
         while currentIter < num_iterations:
             augmented_test_image = next(augmented_test_images)[0]
-            print(f"Augmented shape : {augmented_test_image.shape}")
             test_embedding = model.predict(np.expand_dims(augmented_test_image, axis=0)) 
             round_scores = []
             for person in remaining_persons:
                 similarities = self.calculate_cosine_similarity(test_embedding, all_embeddings[person])
                 round_scores.append((person, max(similarities)))  # Choose the max similarity in this round
             currentIter+=1
-            # Sort and keep top N/2
             round_scores.sort(key=lambda x: x[1], reverse=True)
-            # Add round scores to cumulative scores
             for index, (person, similarity) in enumerate(round_scores):
                 cumulative_scores[person] += similarity
                 frequency_scores[person] += (len(round_scores) - index)

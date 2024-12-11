@@ -287,7 +287,7 @@ class WLLMModel:
                             embedding = self.embedding_model.predict(augmented_img)  # Get embedding from the second output
                             augmented_embeddings.append(embedding)
 
-                        # Average embeddings for this image (or any other method you prefer)
+                        # Average embeddings for this image
                         embedding = np.mean(np.array(augmented_embeddings), axis=0)
                     else:
                         embedding = self.embedding_model.predict(np.expand_dims(img, axis=0))  # Get embedding for original image
