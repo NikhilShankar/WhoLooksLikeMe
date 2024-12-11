@@ -45,8 +45,8 @@ class CosinePredictionHelper:
         # Step 6: Create and save top N plot
         top_n_plot_path = os.path.join(save_path, "top_n_plot.png")
         top_avg_personalities, top_score_personalities = self.create_top_n_plot(df, self.N, top_n_plot_path)
-        self.plot_personality_images(self.image_dataset_path, top_avg_personalities, N=self.N)
-        self.plot_personality_images(self.image_dataset_path, top_score_personalities, N=self.N)
+        self.plot_personality_images(self.image_dataset_path, test_image_path, top_avg_personalities, N=self.N)
+        self.plot_personality_images(self.image_dataset_path, test_image_path, top_score_personalities, N=self.N)
         return top_avg_personalities, top_score_personalities
 
     def calculate_predictions(self, test_image_path: str):
@@ -157,9 +157,13 @@ class CosinePredictionHelper:
         return top_avg, top_score
 
 
-    def plot_personality_images(self, dataset_path: str, top_avg, N: int):
+    def plot_personality_images(self, dataset_path: str, test_image_path, top_avg, N: int):
         personality_names = top_avg.index
-        fig, axes = plt.subplots(1, N, figsize=(N * 3, 3))
+        fig, axes = plt.subplots(1, N+1, figsize=(N * 3, 3))
+        img = plt.imread(test_image_path)
+        axes[0].axis("off")
+        axes[0].imshow(img)
+        axes[0].set_title("TEST IMAGE")
         for i in range(N):
             if i >= len(personality_names):
                 break
@@ -177,17 +181,22 @@ class CosinePredictionHelper:
             img = plt.imread(image_path)
 
             # Plot image
-            axes[i].imshow(img)
-            axes[i].axis("off")
-            axes[i].set_title(f"{personality} - Rank - {i+1} ")
+            axes[i+1].imshow(img)
+            axes[i+1].axis("off")
+            axes[i+1].set_title(f"{personality} - Rank - {i+1} ")
+        
 
         plt.title("Rankings based on Average")
         plt.tight_layout()
         plt.show()
 
-    def plot_personality_images(self, dataset_path: str, top_score, N: int):
+    def plot_personality_images(self, dataset_path: str, test_image_path, top_score, N: int):
         personality_names = top_score.index
-        fig, axes = plt.subplots(1, N, figsize=(N * 3, 3))
+        fig, axes = plt.subplots(1, N+1, figsize=(N * 3, 3))
+        img = plt.imread(test_image_path)
+        axes[0].axis("off")
+        axes[0].imshow(img)
+        axes[0].set_title("TEST IMAGE")
         for i in range(N):
             if i >= len(personality_names):
                 break
@@ -205,9 +214,9 @@ class CosinePredictionHelper:
             img = plt.imread(image_path)
 
             # Plot image
-            axes[i].imshow(img)
-            axes[i].axis("off")
-            axes[i].set_title(f"{personality} - Rank - {i+1} ")
+            axes[i+1].imshow(img)
+            axes[i+1].axis("off")
+            axes[i+1].set_title(f"{personality} - Rank - {i+1} ")
 
         plt.title("Rankings based on Score")
         plt.tight_layout()

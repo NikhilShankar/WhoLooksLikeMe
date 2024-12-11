@@ -8,6 +8,8 @@ from sklearn.metrics import classification_report
 from tensorflow.keras.preprocessing.image import ImageDataGenerator, load_img, img_to_array
 import seaborn as sns
 import os
+import math
+
 
 class ClassificationModel:
 
@@ -95,3 +97,99 @@ class ClassificationModel:
         report_df = pd.DataFrame(report).transpose()
 
         return report_df
+    
+
+    def evaluate_and_print_images(self, test_folder_path):
+        # Initialize ImageDataGenerator for test data
+        test_datagen = ImageDataGenerator(rescale=1.0 / 255.0)
+
+        # Create a generator for the test images
+        test_generator = test_datagen.flow_from_directory(
+            test_folder_path,
+            target_size=(299, 299),  # InceptionV3 input size
+            batch_size=4,
+            class_mode='categorical',
+            shuffle=False  # We don't shuffle for confusion matrix
+        )
+
+        # Get the true labels (class indices)
+        true_labels = test_generator.classes
+        # Map class indices to class names
+        class_names = test_generator.class_indices
+        class_names = {v: k for k, v in class_names.items()}
+
+        # Get the predictions from the model
+        predictions = self.model.predict(
+            test_generator, 
+            steps=math.ceil(test_generator.samples / test_generator.batch_size), 
+            verbose=1
+        )
+        predicted_classes = np.argmax(predictions, axis=1)
+
+        # Calculate confusion matrix
+        cm = confusion_matrix(true_labels, predicted_classes)
+
+        # Plot confusion matrix
+        plt.figure(figsize=(24, 24))
+        sns.heatmap(
+            cm, annot=True, fmt='d', cmap='Blues',
+            xticklabels=list(class_names.values()), 
+            yticklabels=list(class_names.values())
+        )
+        plt.title('Confusion Matrix')
+        plt.ylabel('True Label')
+        plt.xlabel('Predicted Label')
+        plt.xticks(rotation=90)
+        plt.tight_layout()
+        parent_folder = os.path.dirname(self.modelpath)
+
+        plt.savefig(f'{parent_folder}/confusion_matrix.png')  # Save the image
+        plt.close()
+
+        # Classification report for accuracy, precision, recall, and F1 score
+        report = classification_report(
+            true_labels, 
+            predicted_classes, 
+            target_names=list(class_names.values()), 
+            output_dict=True
+        )
+
+        # Convert the classification report to a DataFrame
+        report_df = pd.DataFrame(report).transpose()
+
+        # Add accuracy per class
+        report_df['accuracy'] = 0.0  # Placeholder for accuracy
+        for i, class_name in enumerate(class_names.values()):
+            true_positive = cm[i, i]
+            total_samples = cm[i, :].sum()  # Total samples for this class
+            report_df.loc[class_name, 'accuracy'] = true_positive / total_samples if total_samples > 0 else 0.0
+
+        # Save classification report as CSV
+        report_df.to_csv(f'{parent_folder}/metrics_test_evaluation.csv', index=True)
+
+        # Collect wrongly predicted image paths
+        wrong_predictions = np.where(true_labels != predicted_classes)[0]
+        wrong_image_paths = [test_generator.filepaths[i] for i in wrong_predictions]
+
+        # Plot wrongly predicted images
+        rows = math.ceil(len(wrong_image_paths) / 10)  # 10 images per row
+        fig, axes = plt.subplots(rows, 10, figsize=(20, 2.5 * rows))
+        axes = axes.flatten()
+
+        for i, ax in enumerate(axes):
+            if i < len(wrong_image_paths):
+                img = plt.imread(wrong_image_paths[i])
+                true_class = class_names[true_labels[wrong_predictions[i]]]
+                pred_class = class_names[predicted_classes[wrong_predictions[i]]]
+                ax.imshow(img)
+                ax.axis('off')
+                ax.set_title(f'True: {true_class}\nPred: {pred_class}', fontsize=8)
+            else:
+                ax.axis('off')  # Hide extra subplots
+
+        plt.tight_layout()
+        plt.savefig(f'{parent_folder}/wrong_predictions.png')
+        plt.show()
+
+        # Return metrics
+        return report_df[['accuracy', 'precision', 'recall', 'f1-score', 'support']]
